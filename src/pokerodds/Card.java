@@ -2,7 +2,7 @@ package pokerodds;
 
 public class Card implements Comparable {
     //Symbolic constants
-
+    //ur a bitch
     public static final int CLUB = 0;
     public static final int DIAMOND = 1;
     public static final int HEART = 2;
