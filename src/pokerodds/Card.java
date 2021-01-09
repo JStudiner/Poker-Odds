@@ -2,7 +2,6 @@ package pokerodds;
 
 public class Card{
     //Symbolic constants
-
     public static final int CLUB = 0;
     public static final int DIAMOND = 1;
     public static final int HEART = 2;
