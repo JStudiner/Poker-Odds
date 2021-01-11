@@ -46,11 +46,18 @@ public class Test {
         System.out.println("FTR: " + ftr);
         System.out.println("Your Cards" + yourCards);
         System.out.println("PLayers " + players);
-        if (checkStraight(yourCards, ftr)>=5) {
+        if (checkStraight(yourCards, ftr) >= 5) {
             System.out.println("You have a straight");
         } else {
             System.out.println("No Straight");
         }
+        if (checkFlush(yourCards, ftr) >= 5) {
+            System.out.println("You have a flush");
+        } else {
+            System.out.println("No flush");
+        }
+        System.out.println(checkPairs(yourCards, ftr));
+
     }
 
     public static int checkStraight(CardPile c, CardPile ftr) {
@@ -67,14 +74,49 @@ public class Test {
             comVal[i + 2] = ftrVal[i];
         }
         sortArr(comVal);
-        for (int i = 0; i < comVal.length; i++) {
-            System.out.println(comVal[i]);
-        }
         for (int i = 1; i < comVal.length; i++) {
             if (comVal[i] == comVal[i - 1] + 1) {
                 count++;
-                System.out.println("Count: " + count);
-            } 
+            } else {
+                count = 1;
+            }
+        }
+        return count;
+    }
+
+    public static int checkFlush(CardPile c, CardPile ftr) {
+        int[] pSuit = new int[2];
+        int[] ftrSuit = new int[5];
+        int[] comSuit = new int[7];
+        int count = 1;
+        for (int i = 0; i < pSuit.length; i++) {
+            pSuit[i] = c.getCards().get(i).getSuit();
+            comSuit[i] = pSuit[i];
+        }
+        for (int i = 0; i < ftrSuit.length; i++) {
+            ftrSuit[i] = ftr.getCards().get(i).getSuit();
+            comSuit[i + 2] = ftrSuit[i];
+        }
+        sortArr(comSuit);
+        for (int i = 1; i < comSuit.length; i++) {
+            if (comSuit[i] == comSuit[i - 1]) {
+                count++;
+            } else {
+                count = 1;
+            }
+        }
+        return count;
+
+    }
+
+    public static int checkPairs(CardPile c, CardPile ftr) {
+        int count = 1;
+        for (int i = 0; i < ftr.getCards().size(); i++) {
+            for (int j = 0; j < c.getCards().size(); j++) {
+                if (ftr.getCards().get(i).getRank() == c.getCards().get(j).getRank()) {
+                    count++;
+                }
+            }
         }
         return count;
     }
