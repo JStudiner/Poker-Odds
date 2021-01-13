@@ -15,11 +15,12 @@ public class CardPile {
 
     private ArrayList<Card> cards;
     private Random rand;
+    private int score;
 
     public CardPile() {
         this.rand = new Random();
         this.cards = new ArrayList();
-
+        
     }
 
     /**
@@ -42,6 +43,14 @@ public class CardPile {
     
     public Card removeSpecific(Card c){
         return cards.remove(cards.indexOf(c));
+    }
+    
+    public int getScore(){
+        return score;
+    }
+    
+    public void setScore(int score){
+        this.score+=score;
     }
 
     /**

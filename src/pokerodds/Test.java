@@ -18,11 +18,21 @@ public class Test {
         CardPile deck = new CardPile();
         CardPile burns = new CardPile();
         CardPile ftr = new CardPile();
-        ArrayList<CardPile> players = new ArrayList();
         CardPile yourCards = new CardPile();
+        CardPile oponent = new CardPile();
+
+        /*
+        ArrayList<CardPile> players = new ArrayList();
         Scanner c = new Scanner(System.in);
         System.out.println("How many players not including yourself?");
         int numplayers = c.nextInt();
+        for (int i = 0; i < numplayers; i++) {
+            CardPile p = new CardPile();
+            p.add(deck.removeRandom());
+            p.add(deck.removeRandom());
+            players.add(p);
+        }
+         */
         for (int i = 2; i < 15; i++) {
             for (int j = 0; j < 4; j++) {
                 deck.add(new Card(i, j));
@@ -36,27 +46,15 @@ public class Test {
         }
         for (int i = 0; i < 2; i++) {
             yourCards.add(deck.removeRandom());
+            oponent.add(deck.removeRandom());
         }
-        for (int i = 0; i < numplayers; i++) {
-            CardPile p = new CardPile();
-            p.add(deck.removeRandom());
-            p.add(deck.removeRandom());
-            players.add(p);
-        }
+
         System.out.println("FTR: " + ftr);
         System.out.println("Your Cards" + yourCards);
-        System.out.println("PLayers " + players);
-        if (checkStraight(yourCards, ftr) >= 5) {
-            System.out.println("You have a straight");
-        } else {
-            System.out.println("No Straight");
-        }
-        if (checkFlush(yourCards, ftr) >= 5) {
-            System.out.println("You have a flush");
-        } else {
-            System.out.println("No flush");
-        }
-        System.out.println(checkPairs(yourCards, ftr));
+        System.out.println("Oponent " + oponent);
+        System.out.println(compare(yourCards, oponent, ftr));
+        System.out.println("Your Score: " + yourCards.getScore());
+        System.out.println("Oponent Score: " + oponent.getScore());
 
     }
 
@@ -80,6 +78,9 @@ public class Test {
             } else {
                 count = 1;
             }
+        }
+        if (count >= 5) {
+            c.setScore(count);
         }
         return count;
     }
@@ -105,6 +106,9 @@ public class Test {
                 count = 1;
             }
         }
+        if (count >= 5) {
+            c.setScore(count);
+        }
         return count;
 
     }
@@ -118,7 +122,41 @@ public class Test {
                 }
             }
         }
+        c.setScore(count);
         return count;
+    }
+
+    public static int checkHigh(CardPile c, CardPile ftr) {
+        int[] pVal = new int[2];
+        int[] ftrVal = new int[5];
+        int[] comVal = new int[7];
+        for (int i = 0; i < pVal.length; i++) {
+            pVal[i] = c.getCards().get(i).getRank();
+            comVal[i] = pVal[i];
+        }
+        for (int i = 0; i < ftrVal.length; i++) {
+            ftrVal[i] = ftr.getCards().get(i).getRank();
+            comVal[i + 2] = ftrVal[i];
+        }
+        sortArr(comVal);
+        c.setScore(comVal[6]);
+        return (comVal[6]);
+    }
+
+    public static String compare(CardPile yourCards, CardPile oponents, CardPile ftr) {
+        checkStraight(yourCards, ftr);
+        checkStraight(oponents, ftr);
+        checkFlush(yourCards, ftr);
+        checkFlush(oponents, ftr);
+        checkPairs(yourCards, ftr);
+        checkPairs(oponents, ftr);
+        if (yourCards.getScore() > oponents.getScore()) {
+            return ("You win");
+        } else if (yourCards.getScore() == oponents.getScore()) {
+            return ("Push");
+        } else {
+            return ("You lose");
+        }
     }
 
     public static int[] sortArr(int[] comVal) {
