@@ -6,6 +6,7 @@
 package pokerodds;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -13,6 +14,16 @@ import java.util.Scanner;
  * @author anthonyvalenti
  */
 public class Test {
+
+    public static final int NOTHING = 0;
+    public static final int PAIR = 1;
+    public static final int TWO_PAIR = 2;
+    public static final int TRIPS = 3;
+    public static final int STRAIGHT = 4;
+    public static final int FLUSH = 5;
+    public static final int FULL_HOUSE = 6;
+    public static final int QUADS = 7;
+    public static final int STRAIGHT_FLUSH = 8;
 
     public static void main(String[] args) {
         CardPile deck = new CardPile();
@@ -48,21 +59,23 @@ public class Test {
             yourCards.add(deck.removeRandom());
             oponent.add(deck.removeRandom());
         }
-
+        System.out.println(checkFullHouse(yourCards, ftr));
         System.out.println("FTR: " + ftr);
         System.out.println("Your Cards" + yourCards);
         System.out.println("Oponent " + oponent);
-        System.out.println(compare(yourCards, oponent, ftr));
-        System.out.println("Your Score: " + yourCards.getScore());
-        System.out.println("Oponent Score: " + oponent.getScore());
 
     }
 
-    public static int checkStraight(CardPile c, CardPile ftr) {
+    public static boolean checkStraightFlush(CardPile c, CardPile ftr) {
+        return checkStraight(c, ftr) && checkFlush(c, ftr);
+    }
+
+    public static boolean checkStraight(CardPile c, CardPile ftr) {
         int[] pVal = new int[2];
         int[] ftrVal = new int[5];
         int[] comVal = new int[7];
         int count = 1;
+        boolean straight = false;
         for (int i = 0; i < pVal.length; i++) {
             pVal[i] = c.getCards().get(i).getRank();
             comVal[i] = pVal[i];
@@ -80,16 +93,19 @@ public class Test {
             }
         }
         if (count >= 5) {
-            c.setScore(count);
+            straight = true;
+            c.setHand(STRAIGHT);
         }
-        return count;
+
+        return straight;
     }
 
-    public static int checkFlush(CardPile c, CardPile ftr) {
+    public static boolean checkFlush(CardPile c, CardPile ftr) {
         int[] pSuit = new int[2];
         int[] ftrSuit = new int[5];
         int[] comSuit = new int[7];
         int count = 1;
+        boolean flush = false;
         for (int i = 0; i < pSuit.length; i++) {
             pSuit[i] = c.getCards().get(i).getSuit();
             comSuit[i] = pSuit[i];
@@ -107,23 +123,97 @@ public class Test {
             }
         }
         if (count >= 5) {
-            c.setScore(count);
+            c.setHand(FLUSH);
+            flush = true;
         }
-        return count;
+        return flush;
 
     }
 
-    public static int checkPairs(CardPile c, CardPile ftr) {
-        int count = 1;
-        for (int i = 0; i < ftr.getCards().size(); i++) {
-            for (int j = 0; j < c.getCards().size(); j++) {
-                if (ftr.getCards().get(i).getRank() == c.getCards().get(j).getRank()) {
-                    count++;
-                }
+    public static int checkPair(CardPile c, CardPile ftr) {
+        int[] pVal = new int[2];
+        int[] ftrVal = new int[5];
+        int[] comVal = new int[7];
+        for (int i = 0; i < pVal.length; i++) {
+            pVal[i] = c.getCards().get(i).getRank();
+            comVal[i] = pVal[i];
+
+        }
+        for (int i = 0; i < ftrVal.length; i++) {
+            ftrVal[i] = ftr.getCards().get(i).getRank();
+            comVal[i + 2] = ftrVal[i];
+        }
+        sortArr(comVal);
+        for (int i = 1; i < comVal.length; i++) {
+            if (comVal[i] == comVal[i - 1] && comVal[i] != checkTrips(c, ftr)) {
+                c.setHand(PAIR);
+                return comVal[i];
             }
         }
-        c.setScore(count);
-        return count;
+
+        return 0;
+    }
+
+    public static boolean checkTwoPair(CardPile c, CardPile ftr) {
+        int[] pVal = new int[2];
+        int[] ftrVal = new int[5];
+        int[] comVal = new int[7];
+        for (int i = 0; i < pVal.length; i++) {
+            pVal[i] = c.getCards().get(i).getRank();
+            comVal[i] = pVal[i];
+
+        }
+        for (int i = 0; i < ftrVal.length; i++) {
+            ftrVal[i] = ftr.getCards().get(i).getRank();
+            comVal[i + 2] = ftrVal[i];
+        }
+        sortArr(comVal);
+        for (int i = 1; i < comVal.length; i++) {
+            if (comVal[i] == comVal[i - 1] && checkTrips(c, ftr) == 0) {
+                for (int j = i + 1; j < comVal.length; j++) {
+                    if (comVal[j] == comVal[j - 1]) {
+                        c.setHand(TWO_PAIR);
+                        return true;
+                    }
+
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+    public static int checkTrips(CardPile c, CardPile ftr) {
+        int[] pVal = new int[2];
+        int[] ftrVal = new int[5];
+        int[] comVal = new int[7];
+        for (int i = 0; i < pVal.length; i++) {
+            pVal[i] = c.getCards().get(i).getRank();
+            comVal[i] = pVal[i];
+
+        }
+        for (int i = 0; i < ftrVal.length; i++) {
+            ftrVal[i] = ftr.getCards().get(i).getRank();
+            comVal[i + 2] = ftrVal[i];
+        }
+        sortArr(comVal);
+        for (int i = 2; i < comVal.length; i++) {
+            if (comVal[i] == comVal[i - 1] && comVal[i - 1] == comVal[i - 2]) {
+                c.setHand(TRIPS);
+                return comVal[i];
+            }
+        }
+
+        return 0;
+    }
+
+    public static boolean checkFullHouse(CardPile c, CardPile ftr) {
+        if (checkPair(c, ftr) != 0 && checkTrips(c, ftr) != 0 && checkPair(c, ftr) != checkTrips(c, ftr)) {
+            c.setHand(FULL_HOUSE);
+            return true;
+        }
+        return false;
     }
 
     public static int checkHigh(CardPile c, CardPile ftr) {
@@ -139,24 +229,8 @@ public class Test {
             comVal[i + 2] = ftrVal[i];
         }
         sortArr(comVal);
-        c.setScore(comVal[6]);
+        c.setHand(comVal[6]);
         return (comVal[6]);
-    }
-
-    public static String compare(CardPile yourCards, CardPile oponents, CardPile ftr) {
-        checkStraight(yourCards, ftr);
-        checkStraight(oponents, ftr);
-        checkFlush(yourCards, ftr);
-        checkFlush(oponents, ftr);
-        checkPairs(yourCards, ftr);
-        checkPairs(oponents, ftr);
-        if (yourCards.getScore() > oponents.getScore()) {
-            return ("You win");
-        } else if (yourCards.getScore() == oponents.getScore()) {
-            return ("Push");
-        } else {
-            return ("You lose");
-        }
     }
 
     public static int[] sortArr(int[] comVal) {

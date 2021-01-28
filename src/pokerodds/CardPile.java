@@ -16,11 +16,12 @@ public class CardPile {
     private ArrayList<Card> cards;
     private Random rand;
     private int score;
+    private boolean winner;
 
     public CardPile() {
         this.rand = new Random();
         this.cards = new ArrayList();
-        
+
     }
 
     /**
@@ -40,17 +41,33 @@ public class CardPile {
     public Card removeRandom() {
         return cards.remove(rand.nextInt(cards.size())); //removes card in random order from index between 0 and 51(size of cards array)
     }
-    
-    public Card removeSpecific(Card c){
+
+    public Card removeSpecific(Card c) {
         return cards.remove(cards.indexOf(c));
     }
-    
-    public int getScore(){
+
+    public int getHand() {
         return score;
     }
-    
-    public void setScore(int score){
-        this.score+=score;
+
+    public void setHand(int score) {
+        this.score += score;
+    }
+
+    public int getHandStrength() {
+        return score;
+    }
+
+    public void setHandStrength(int score) {
+        this.score += score;
+    }
+
+    public void setWinner(boolean winner) {
+        this.winner = winner;
+    }
+
+    public boolean getWinner() {
+        return (winner);
     }
 
     /**
@@ -69,7 +86,5 @@ public class CardPile {
     public ArrayList<Card> getCards() {
         return cards;
     }
-
-  
 
 }
