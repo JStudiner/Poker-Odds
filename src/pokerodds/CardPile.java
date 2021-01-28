@@ -51,7 +51,7 @@ public class CardPile {
     }
 
     public void setHand(int score) {
-        this.score += score;
+        this.score = score;
     }
 
     public int getHandStrength() {
@@ -80,6 +80,8 @@ public class CardPile {
         String temp = "";
         return (this.cards.stream().map((c) -> c.toString() + ", ").reduce(temp, String::concat));
     }
+
+    
 
     /**
      * @return the cards

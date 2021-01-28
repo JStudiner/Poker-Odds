@@ -6,8 +6,6 @@
 package pokerodds;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 
 /**
  *
@@ -25,45 +23,37 @@ public class PokerHands {
     public static final int QUADS = 7;
     public static final int STRAIGHT_FLUSH = 8;
 
-    public static void main(String[] args) {
-        CardPile deck = new CardPile();
-        CardPile burns = new CardPile();
-        CardPile ftr = new CardPile();
-        CardPile yourCards = new CardPile();
-        CardPile oponent = new CardPile();
-
-        /*
-        ArrayList<CardPile> players = new ArrayList();
-        Scanner c = new Scanner(System.in);
-        System.out.println("How many players not including yourself?");
-        int numplayers = c.nextInt();
-        for (int i = 0; i < numplayers; i++) {
-            CardPile p = new CardPile();
-            p.add(deck.removeRandom());
-            p.add(deck.removeRandom());
-            players.add(p);
-        }
-         */
-        for (int i = 2; i < 15; i++) {
-            for (int j = 0; j < 4; j++) {
-                deck.add(new Card(i, j));
+    public static CardPile evaluate(CardPile yourCards, ArrayList<CardPile> oponents, CardPile ftr) {
+        ArrayList<CardPile> winner = new ArrayList<>();
+        findHands(yourCards, ftr);
+        winner.add(yourCards);
+        oponents.forEach((oponent) -> {
+            findHands(oponent, ftr);
+            winner.add(oponent);
+        });
+        for (int i = 1; i < winner.size(); i++) {
+            if (winner.get(i).getHand() > winner.get(i - 1).getHand()) {
+                winner.remove(i - 1);
+            } else {
+                winner.remove(i);
             }
         }
-        for (int i = 0; i < 3; i++) {
-            burns.add(deck.removeRandom());
-        }
-        for (int i = 0; i < 5; i++) {
-            ftr.add(deck.removeRandom());
-        }
-        for (int i = 0; i < 2; i++) {
-            yourCards.add(deck.removeRandom());
-            oponent.add(deck.removeRandom());
-        }
-        System.out.println(checkFullHouse(yourCards, ftr));
-        System.out.println("FTR: " + ftr);
-        System.out.println("Your Cards: " + yourCards);
-        System.out.println("Oponent: " + oponent);
+        System.out.println("Winning hand: "+winner.get(0));
+        System.out.println(winner.get(0).getHand());
+        System.out.println(showWinner(winner.get(0)));
+        
+        return winner.get(0);
+    }
 
+    public static void findHands(CardPile c, CardPile ftr) {
+        checkHigh(c, ftr);
+        checkPair(c, ftr);
+        checkTwoPair(c, ftr);
+        checkTrips(c, ftr);
+        checkStraight(c, ftr);
+        checkFlush(c, ftr);
+        checkFullHouse(c, ftr);
+        checkStraightFlush(c, ftr);
     }
 
     public static boolean checkStraightFlush(CardPile c, CardPile ftr) {
@@ -94,7 +84,9 @@ public class PokerHands {
         }
         if (count >= 5) {
             straight = true;
-            c.setHand(STRAIGHT);
+            if (c.getHand() < STRAIGHT) {
+                c.setHand(STRAIGHT);
+            }
         }
 
         return straight;
@@ -123,7 +115,9 @@ public class PokerHands {
             }
         }
         if (count >= 5) {
-            c.setHand(FLUSH);
+            if (c.getHand() < FLUSH) {
+                c.setHand(FLUSH);
+            }
             flush = true;
         }
         return flush;
@@ -146,7 +140,9 @@ public class PokerHands {
         sortArr(comVal);
         for (int i = 1; i < comVal.length; i++) {
             if (comVal[i] == comVal[i - 1] && comVal[i] != checkTrips(c, ftr)) {
-                c.setHand(PAIR);
+                if (c.getHand() < PAIR) {
+                    c.setHand(PAIR);
+                }
                 return comVal[i];
             }
         }
@@ -172,7 +168,9 @@ public class PokerHands {
             if (comVal[i] == comVal[i - 1] && checkTrips(c, ftr) == 0) {
                 for (int j = i + 1; j < comVal.length; j++) {
                     if (comVal[j] == comVal[j - 1]) {
-                        c.setHand(TWO_PAIR);
+                        if (c.getHand() < TWO_PAIR) {
+                            c.setHand(TWO_PAIR);
+                        }
                         return true;
                     }
 
@@ -200,7 +198,9 @@ public class PokerHands {
         sortArr(comVal);
         for (int i = 2; i < comVal.length; i++) {
             if (comVal[i] == comVal[i - 1] && comVal[i - 1] == comVal[i - 2]) {
-                c.setHand(TRIPS);
+                if (c.getHand() < TRIPS) {
+                    c.setHand(TRIPS);
+                }
                 return comVal[i];
             }
         }
@@ -210,7 +210,9 @@ public class PokerHands {
 
     public static boolean checkFullHouse(CardPile c, CardPile ftr) {
         if (checkPair(c, ftr) != 0 && checkTrips(c, ftr) != 0 && checkPair(c, ftr) != checkTrips(c, ftr)) {
-            c.setHand(FULL_HOUSE);
+            if (c.getHand() < FULL_HOUSE) {
+                c.setHand(FULL_HOUSE);
+            }
             return true;
         }
         return false;
@@ -229,7 +231,7 @@ public class PokerHands {
             comVal[i + 2] = ftrVal[i];
         }
         sortArr(comVal);
-        c.setHand(comVal[6]);
+        c.setHand(NOTHING);
         return (comVal[6]);
     }
 
@@ -244,6 +246,39 @@ public class PokerHands {
             comVal[i] = item;
         }
         return (comVal);
+    }
+
+    public static String showWinner(CardPile c) {
+        String temp = "";
+        if (c.getHand() == NOTHING) {
+            return ("High card win");
+        }
+        if (c.getHand() == PAIR) {
+            return ("Pair win");
+        }
+        if (c.getHand() == TWO_PAIR) {
+            return ("Two pair win");
+        }
+        if (c.getHand() == TRIPS) {
+            return ("Trips win");
+        }
+        if (c.getHand() == STRAIGHT) {
+            return ("Straight win");
+        }
+        if (c.getHand() == FLUSH) {
+            return ("Flush win");
+        }
+        if (c.getHand() == FULL_HOUSE) {
+            return ("Full house win");
+        }
+        if (c.getHand() == QUADS) {
+            return ("Quads win");
+        }
+        if (c.getHand() == STRAIGHT_FLUSH) {
+            return ("Straight flush win");
+        }
+        return ("");
+
     }
 
 }
