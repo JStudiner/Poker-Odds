@@ -77,7 +77,8 @@ public class CardPile {
      */
     @Override
     public String toString() {
-        return cards + " ";
+        String temp = "";
+        return (this.cards.stream().map((c) -> c.toString() + ", ").reduce(temp, String::concat));
     }
 
     /**

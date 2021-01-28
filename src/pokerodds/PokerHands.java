@@ -13,7 +13,7 @@ import java.util.Scanner;
  *
  * @author anthonyvalenti
  */
-public class Test {
+public class PokerHands {
 
     public static final int NOTHING = 0;
     public static final int PAIR = 1;
@@ -61,8 +61,8 @@ public class Test {
         }
         System.out.println(checkFullHouse(yourCards, ftr));
         System.out.println("FTR: " + ftr);
-        System.out.println("Your Cards" + yourCards);
-        System.out.println("Oponent " + oponent);
+        System.out.println("Your Cards: " + yourCards);
+        System.out.println("Oponent: " + oponent);
 
     }
 
