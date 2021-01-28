@@ -38,10 +38,10 @@ public class PokerHands {
                 winner.remove(i);
             }
         }
-        System.out.println("Winning hand: "+winner.get(0));
+        System.out.println("Winning hand: " + winner.get(0));
         System.out.println(winner.get(0).getHand());
         System.out.println(showWinner(winner.get(0)));
-        
+
         return winner.get(0);
     }
 
@@ -53,6 +53,7 @@ public class PokerHands {
         checkStraight(c, ftr);
         checkFlush(c, ftr);
         checkFullHouse(c, ftr);
+        checkQuads(c,ftr);
         checkStraightFlush(c, ftr);
     }
 
@@ -200,6 +201,32 @@ public class PokerHands {
             if (comVal[i] == comVal[i - 1] && comVal[i - 1] == comVal[i - 2]) {
                 if (c.getHand() < TRIPS) {
                     c.setHand(TRIPS);
+                }
+                return comVal[i];
+            }
+        }
+
+        return 0;
+    }
+
+    public static int checkQuads(CardPile c, CardPile ftr) {
+        int[] pVal = new int[2];
+        int[] ftrVal = new int[5];
+        int[] comVal = new int[7];
+        for (int i = 0; i < pVal.length; i++) {
+            pVal[i] = c.getCards().get(i).getRank();
+            comVal[i] = pVal[i];
+
+        }
+        for (int i = 0; i < ftrVal.length; i++) {
+            ftrVal[i] = ftr.getCards().get(i).getRank();
+            comVal[i + 2] = ftrVal[i];
+        }
+        sortArr(comVal);
+        for (int i = 3; i < comVal.length; i++) {
+            if (comVal[i] == comVal[i - 1] && comVal[i] == comVal[i - 2] && comVal[i]==comVal[i-3]) {
+                if (c.getHand() < QUADS) {
+                    c.setHand(QUADS);
                 }
                 return comVal[i];
             }
