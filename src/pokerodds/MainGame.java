@@ -13,15 +13,15 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MainGame {
-
+    //ur code is ass
     private static CardPile deck;
     private static CardPile burns;
     private static CardPile ftr;
     private static CardPile yourCards;
-    private static ArrayList<CardPile> opponent = new ArrayList<>();
+    private static ArrayList<CardPile> opponent = new ArrayList<CardPile>();
     private static Scanner c = new Scanner(System.in);
 
-    public static void main(String args[]) {
+    public static void main(String [] args) {
         deal();
         showCards();
         System.out.println("---------------------");
@@ -56,7 +56,6 @@ public class MainGame {
             c.add(deck.removeRandom());
             opponent.add(c);
         }
-
     }
 
     public static void showCards() {
